@@ -1,0 +1,54 @@
+import java.nio.file.Paths
+
+plugins {
+    id 'kotlin-multiplatform'
+    // id 'maven-publish'
+}
+
+// group 'org.jetbrains.kotlin.sample.native'
+group 'audio.rabid.debug.game'
+version '1.0'
+
+// def localRepo = rootProject.file('build/.m2-repo')
+
+// publishing {
+//     repositories {
+//         maven { url = "file://$localRepo" }
+//     }
+// }
+
+task cleanLocalRepo(type: Delete) {
+    delete localRepo
+}
+
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
+
+kotlin {
+    targets {
+        fromPreset(hostPreset, 'allegro') {
+            compilations.main.cinterops {
+                libcurl {
+                    switch (hostPreset) {
+                        case presets.macosX64:
+                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include', '/usr/local/Cellar/allegro/5.2.4.0/include'
+                            break
+                        case presets.linuxX64:
+                            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                            break
+                    }
+                }
+            }
+
+            // mavenPublication {
+            //     pom {
+            //         withXml {
+            //             def root = asNode()
+            //             root.appendNode('name', 'libcurl interop library')
+            //             root.appendNode('description', 'A library providing interoperability with host libcurl')
+            //         }
+            //     }
+            // }
+        }
+    }
+}

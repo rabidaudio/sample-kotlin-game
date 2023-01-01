@@ -1,0 +1,4 @@
+headers = allegro5/allegro5.h
+headerFilter = allegro5/**
+package = allegro5
+staticLibraries = liballegro liballegro_main
